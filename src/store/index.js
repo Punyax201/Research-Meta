@@ -1,8 +1,7 @@
 /* eslint-disable */
 import Vue from 'vue'
 import Vuex from 'vuex'
-import articles from './article'
-
+import axios from 'axios'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -11,6 +10,8 @@ export default new Vuex.Store({
     //SEARCH
     searchURL: 'http://172.23.0.31:8000/',
     recommURL: 'http://172.23.0.31:8000/recommendation?data=',
+    keywordsURL: "http://172.23.0.31:8000/keywords?data=",
+
     searchMode: 'author',
     searchResults: [
       {
@@ -25,7 +26,10 @@ export default new Vuex.Store({
     recommendedItems: [],
 
     //ARTICLE
-    currArticle: {}
+    currArticle: {},
+
+    //KEYWORDS
+    keywords: {}
   },
   mutations: {
     updateSearchResults: (state,payload) => {
@@ -48,6 +52,10 @@ export default new Vuex.Store({
 
     setCurrArticle: (state,payload) => {
       state.currArticle = payload
+    },
+
+    setKeywords(state,payload){
+      state.keywords = payload
     }
   },
   actions: {
@@ -101,6 +109,17 @@ export default new Vuex.Store({
     //GET CURR ARTICLE
     currArticleAction(context,payload){
       context.commit('setCurrArticle',payload)
+    },
+
+    //KEYWORDS ACTION
+    async keywordsAction(context, key){
+      axios.get(this.state.keywordsURL + key).then(res => {
+          context.commit('setKeywords', res)
+          console.log("key",res)
+      }).catch(err => {
+        console.log("key url", this.state.keywords)
+        console.log("key",err)
+      })
     }
   },
   getters:{
@@ -122,9 +141,11 @@ export default new Vuex.Store({
 
     getCurrArticle(state){
       return state.currArticle  
+    },
+
+    //KEYWORDS
+    getKeywords(state){
+      return state.keywords
     }
-  },
-  modules: {
   }
 })
-export const article = articles

@@ -4,10 +4,11 @@
 
       <!--WORD STATS-->
       <v-slide-y-transition>
-        <!-- <div class="recomm" v-if="recommendedItems.length > 0" v-show="true">
-          <h3 class="headline">Also See: </h3>
-          <v-chip v-for="i in recommendedItems" @click="searchInterests(i)" :key="i" href="" class="ma-2">{{i}}</v-chip>  
-        </div> -->
+        <div class="keywords" v-show="true">
+          <h3 class="headline">Word Count: {{wordCount}}</h3>
+          <h3 class="headline">Keywords: </h3>
+          <v-chip v-for="i in keywords" :key="i" href="" class="ma-2">{{i}}</v-chip>  
+        </div>
       </v-slide-y-transition>
 
       <!--CARD-->
@@ -43,15 +44,23 @@ export default {
     return{
       pdfIcon: require('../assets/pdf.png'),
 
-      article: {}
+      article: {},
+
+      wordCount: null
     }
   },
   created(){
-      //this.article = this.$store.article.getters['getCurrArticle']
-      this.$store.article.dispatch('keywordsAction')
+      this.article = this.$store.getters['getCurrArticle'] 
   },
   mounted(){
-    this.impWords = ['a']
+    this.$store.dispatch('keywordsAction', this.article.fileURL)
+  },
+  computed: {
+    keywords(){
+      let d = this.$store.getters['getKeywords'].data
+      this.wordCount = d.words
+      return d.data
+    }
   }
 }
 </script>
